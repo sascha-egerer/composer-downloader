@@ -1,0 +1,17 @@
+{
+    "name": "dkd/downloaders",
+    "type": "package",
+    "description": "A t3x Downloader",
+    "keywords": [
+        "downloader"
+    ],
+    "authors": [
+        {
+            "name": "Sascha Egerer",
+            "email": "sascha.egerer@dkd.de"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "Dkd": "src/" }
+    }
+}
