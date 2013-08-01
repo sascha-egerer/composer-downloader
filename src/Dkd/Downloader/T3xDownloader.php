@@ -40,7 +40,7 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
     /**
      * {@inheritDoc}
      */
-    public function getLocalChanges($path, PackageInterface $package)
+    public function getLocalChanges(PackageInterface $package, $path)
     {
         $messages = array();
 
