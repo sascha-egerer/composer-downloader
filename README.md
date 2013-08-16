@@ -6,6 +6,12 @@ Adds a t3x Downloader for TYPO3 CMS Extensions.
 This Package is used by the TYPO3 CMS installer.
 https://github.com/dkd/installers/tree/typo3-cms-installer
 
+IMPORTANT: There is currently no way to register a downloader with a simple composer. 
+You have to add some scripts that hook into the composer process.
+This will give you a warning if you run composer install for the first time, because the script
+does not exist at this point. You can ignore this Warning!
+You have to add the dkd/downloaders Package befor an extension with in t3x format!
+
 You have to add these configurations in your main composer.json:
 
 <pre>
