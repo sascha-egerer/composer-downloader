@@ -17,6 +17,17 @@ use Composer\Downloader\ChangeReportInterface;
 class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
 {
 
+    private $package;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function download(PackageInterface $package, $path) {
+        // set package so we can use it in the extract method
+        $this->package = $package;
+        parent::download($package, $path);
+    }
+
     /**
      * @param string $file path to the archive file
      * @param string $path path where the extension should be extracted to
@@ -26,6 +37,16 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
         // get file contents
         $fileContentStream = file_get_contents($file);
         $extensionData = $this->decodeTerExchangeData($fileContentStream);
+
+        if($this->package instanceof PackageInterface) {
+            $extra = $this->package->getExtra();
+            if(isset($extra['emconf_constraints'])) {
+                if($constraints = unserialize($extra['emconf_constraints'])) {
+                    $extensionData['EM_CONF']['constraints'] = $constraints;
+                }
+            }
+        }
+
         if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
             $path .= DIRECTORY_SEPARATOR;
         }
@@ -179,9 +200,11 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
     protected function writeExtensionFiles(array $files, $rootPath)
     {
         foreach ($files as $file) {
+            if(!$file['name']) {
+                continue;
+            }
             $filename = $rootPath . $file['name'];
             $content = $file['content'];
-
             if ($fd = fopen($filename, 'wb')) {
                 fwrite($fd, $content);
                 fclose($fd);
