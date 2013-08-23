@@ -41,9 +41,7 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
         if($this->package instanceof PackageInterface) {
             $extra = $this->package->getExtra();
             if(isset($extra['emconf_constraints'])) {
-                if($constraints = unserialize($extra['emconf_constraints'])) {
-                    $extensionData['EM_CONF']['constraints'] = $constraints;
-                }
+                $extensionData['EM_CONF']['constraints'] = $this->convertDependencies($extra['emconf_constraints']);
             }
         }
 
@@ -359,4 +357,22 @@ $EM_CONF[$_EXTKEY] = ' . $emConf . ';
         return $constraint;
     }
 
+    /**
+     * Convert dependencies from TER format to EM_CONF format
+     *
+     * @param  string  $dependencies  serialized dependency array
+     * @return void
+     */
+    protected function convertDependencies($dependencies) {
+        $newDependencies = array();
+        $dependenciesArray = unserialize($dependencies);
+        if (is_array($dependenciesArray)) {
+            foreach ($dependenciesArray as $version) {
+                if(!empty($version['extensionKey'])) {
+                    $newDependencies[$version['kind']][$version['extensionKey']] = $version['versionRange'];
+                }
+            }
+        }
+        return $newDependencies;
+    }
 }
