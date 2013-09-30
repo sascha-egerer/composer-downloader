@@ -24,7 +24,7 @@ class RegisterDownloader
         }
         $event->getComposer()->getDownloadManager()->setDownloader(
             't3x',
-            new Downloader\T3xDownloader($io, $config, $cache)
+            new Downloader\T3xDownloader($io, $config, $event->getComposer()->getEventDispatcher(), $cache)
         );
     }
 
