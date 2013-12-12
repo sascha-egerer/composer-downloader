@@ -62,6 +62,7 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
     public function getLocalChanges(PackageInterface $package, $path)
     {
         $messages = array();
+        $path = rtrim($path, '/') . '/';
 
         // check if there is a ext_emconf.php
         if(is_file($path . 'ext_emconf.php')) {
