@@ -199,7 +199,7 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
     protected function writeExtensionFiles(array $files, $rootPath)
     {
         foreach ($files as $file) {
-            if(!$file['name']) {
+            if(empty($file['name']) || substr($file['name'], -1) === '/') {
                 continue;
             }
             $filename = $rootPath . $file['name'];
