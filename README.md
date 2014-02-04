@@ -9,6 +9,22 @@ This will give you a *warning* if you run composer install for *the first time*,
 does not exist at this point. You can *ignore* this Warning!
 You have to add the dkd/downloaders Package before an package in t3x format!
 
+*Fake requirements*:
+If an extension requires a packages that is not installed by composer (e.g. extbase) you will maybe get an error because the packages is not in the TER.
+To tell composer that your package provides a package you can use _provide_. For more details look at the composer documentation. https://getcomposer.org/doc/04-schema.md#provide
+
+Example:
+<pre>
+{
+    ...
+	"provide": {
+		"typo3-cms-extension/extbase" : "~1.3.4",
+		"typo3-cms-extension/fluid" : "~1.3.1"
+	},
+    ...
+}
+</pre>
+
 Example composer.json package
 <pre>
 {
