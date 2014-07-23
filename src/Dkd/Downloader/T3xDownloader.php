@@ -238,7 +238,7 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
     public function constructEmConf(array $extensionData, $path)
     {
         $emConf = $this->fixEmConf($extensionData['EM_CONF']);
-        $emConf['_md5_values_when_last_written'] = serialize($this->extensionMD5array($extensionData['FILES']), $path);
+        $emConf['_md5_values_when_last_written'] = serialize($this->extensionMD5array($extensionData['FILES'], $path));
         $emConf = var_export($emConf, TRUE);
         $code = '<?php
 
