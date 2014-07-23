@@ -62,7 +62,10 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
     public function getLocalChanges(PackageInterface $package, $path)
     {
         $messages = array();
-        $path = rtrim($path, '/') . '/';
+
+        if (substr($path, -1) !== DIRECTORY_SEPARATOR) {
+            $path .= DIRECTORY_SEPARATOR;
+        }
 
         // check if there is a ext_emconf.php
         if(is_file($path . 'ext_emconf.php')) {
@@ -213,11 +216,11 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
 
     /**
      * @param array $extensionData
-     * @param string $path path of the extension folder
+     * @param string $path path of the target folder
      */
     protected function writeEmConf(array $extensionData, $path)
     {
-        $emConfContent = $this->constructEmConf($extensionData);
+        $emConfContent = $this->constructEmConf($extensionData, $path);
         if ($fd = fopen($path . 'ext_emconf.php', 'wb')) {
             fwrite($fd, $emConfContent);
             fclose($fd);
@@ -229,12 +232,13 @@ class T3xDownloader extends ArchiveDownloader implements ChangeReportInterface
      *
      * @internal
      * @param array $extensionData
+     * @param string $path path of the target folder
      * @return string
      */
-    public function constructEmConf(array $extensionData)
+    public function constructEmConf(array $extensionData, $path)
     {
         $emConf = $this->fixEmConf($extensionData['EM_CONF']);
-        $emConf['_md5_values_when_last_written'] = serialize($this->extensionMD5array($extensionData['FILES']));
+        $emConf['_md5_values_when_last_written'] = serialize($this->extensionMD5array($extensionData['FILES']), $path);
         $emConf = var_export($emConf, TRUE);
         $code = '<?php
 
@@ -257,16 +261,17 @@ $EM_CONF[$_EXTKEY] = ' . $emConf . ';
     /**
      * Creates a MD5-hash array over the current files in the extension
      *
-     * @param    array $filesArray
-     * @return    array MD5-keys
+     * @param array $filesArray
+     * @param string $path path of the target folder
+     * @return array MD5-keys
      */
-    function extensionMD5array(array $filesArray)
+    function extensionMD5array(array $filesArray, $path)
     {
         $md5Array = array();
 
         // Traverse files.
         foreach ($filesArray as $fileName => $fileInfo) {
-            if ($fileName != 'ext_emconf.php') {
+            if ($fileName != 'ext_emconf.php' && !is_dir($path . $fileName)) {
                 $md5Array[$fileName] = substr($fileInfo['content_md5'], 0, 4);
             }
         }
